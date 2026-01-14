@@ -33,84 +33,86 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       appBar: AppBar(title: const Text("Caption Generator")),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            GestureDetector(
-              onTap: pickImage,
-              child: Container(
-                height: 220,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: Colors.black12),
-                ),
-                child: imageBytes == null
-                    ? const Center(child: Text("Tap to pick image"))
-                    : ClipRRect(
-                        borderRadius: BorderRadius.circular(16),
-                        child: Image.memory(imageBytes!, fit: BoxFit.cover),
-                      ),
-              ),
-            ),
-            const SizedBox(height: 14),
-
-            FutureBuilder<int>(
-              future: vm.remainingToday(),
-              builder: (context, snap) {
-                final remaining = snap.data;
-                return Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    remaining == null ? "Daily remaining: ..." : "Daily remaining: $remaining/5",
-                    style: TextStyle(color: Colors.black.withOpacity(0.7)),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              GestureDetector(
+                onTap: pickImage,
+                child: Container(
+                  height: 220,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: Colors.black12),
                   ),
-                );
-              },
-            ),
-
-            const SizedBox(height: 12),
-
-            if (vm.error != null)
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.red.withOpacity(0.08),
-                  borderRadius: BorderRadius.circular(12),
+                  child: imageBytes == null
+                      ? const Center(child: Text("Tap to pick image"))
+                      : ClipRRect(
+                          borderRadius: BorderRadius.circular(16),
+                          child: Image.memory(imageBytes!, fit: BoxFit.cover),
+                        ),
                 ),
-                child: Text(vm.error!, style: const TextStyle(color: Colors.red)),
               ),
-
-            const Spacer(),
-
-            SizedBox(
-              width: double.infinity,
-              height: 50,
-              child: ElevatedButton.icon(
-                onPressed: vm.loading
-                    ? null
-                    : () async {
-                        await vm.generateFromImageBytes(imageBytes);
-                        if (vm.error == null && vm.captions.isNotEmpty && mounted) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (_) => const ResultScreen()),
-                          );
-                        }
-                      },
-                icon: vm.loading
-                    ? const SizedBox(
-                        width: 18,
-                        height: 18,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : const Icon(Icons.auto_awesome),
-                label: Text(vm.loading ? "Generating..." : "Generate Captions"),
+              const SizedBox(height: 14),
+        
+              FutureBuilder<int>(
+                future: vm.remainingToday(),
+                builder: (context, snap) {
+                  final remaining = snap.data;
+                  return Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      remaining == null ? "Daily remaining: ..." : "Daily remaining: $remaining/5",
+                      style: TextStyle(color: Colors.black.withOpacity(0.7)),
+                    ),
+                  );
+                },
               ),
-            ),
-          ],
+        
+              const SizedBox(height: 12),
+        
+              if (vm.error != null)
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.red.withOpacity(0.08),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(vm.error!, style: const TextStyle(color: Colors.red)),
+                ),
+        
+              const Spacer(),
+        
+              SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: ElevatedButton.icon(
+                  onPressed: vm.loading
+                      ? null
+                      : () async {
+                          await vm.generateFromImageBytes(imageBytes);
+                          if (vm.error == null && vm.captions.isNotEmpty && mounted) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (_) => const ResultScreen()),
+                            );
+                          }
+                        },
+                  icon: vm.loading
+                      ? const SizedBox(
+                          width: 18,
+                          height: 18,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Icon(Icons.auto_awesome),
+                  label: Text(vm.loading ? "Generating..." : "Generate Captions"),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
