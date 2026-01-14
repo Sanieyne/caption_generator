@@ -15,6 +15,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final picker = ImagePicker();
   Uint8List? imageBytes;
+  String? _lastError;
 
   Future<void> pickImage() async {
     final file = await picker.pickImage(source: ImageSource.gallery, imageQuality: 85);
@@ -30,6 +31,16 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<CaptionProvider>();
+
+    if (vm.error != null && vm.error != _lastError) {
+      _lastError = vm.error;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(vm.error!)),
+        );
+      });
+    }
 
     return Scaffold(
       appBar: AppBar(title: const Text("Caption Generator")),
