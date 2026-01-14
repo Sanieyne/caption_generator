@@ -89,10 +89,34 @@ class _HomeScreenState extends State<HomeScreen> {
                   width: double.infinity,
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.red.withOpacity(0.08),
+                    color: vm.error == "No internet connection."
+                        ? Colors.orange.withOpacity(0.12)
+                        : Colors.red.withOpacity(0.08),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Text(vm.error!, style: const TextStyle(color: Colors.red)),
+                  child: Row(
+                    children: [
+                      Icon(
+                        vm.error == "No internet connection."
+                            ? Icons.wifi_off
+                            : Icons.error_outline,
+                        color: vm.error == "No internet connection."
+                            ? Colors.orange
+                            : Colors.red,
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          vm.error!,
+                          style: TextStyle(
+                            color: vm.error == "No internet connection."
+                                ? Colors.orange
+                                : Colors.red,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
         
               const Spacer(),

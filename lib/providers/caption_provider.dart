@@ -1,14 +1,12 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import '../services/hf_image_caption_service.dart';
-import '../services/hf_text_gen_service.dart';
+import '../services/backend_caption_service.dart';
 import '../services/rate_limit_service.dart';
 import '../services/admob_service.dart';
 
 class CaptionProvider extends ChangeNotifier {
-  final _imgService = HfImageCaptionService();
-  final _textService = HfTextGenService();
+  final _backend = BackendCaptionService();
   final _rate = RateLimitService();
 
   final AdMobService ads;
@@ -60,11 +58,10 @@ class CaptionProvider extends ChangeNotifier {
       // Interstitial on click
       ads.showInterstitialIfReady();
 
-      final desc = await _imgService.captionImage(imageBytes);
-      final caps = await _textService.generateCaptions(imageDescription: desc);
+      final result = await _backend.generate(imageBytes);
 
-      imageDescription = desc;
-      captions = caps;
+      imageDescription = result.description;
+      captions = result.captions;
 
       await _rate.consumeOne();
     } catch (e) {
