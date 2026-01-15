@@ -129,7 +129,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       ? null
                       : () async {
                           await vm.generateFromImageBytes(imageBytes);
-                          if (vm.error == null && vm.captions.isNotEmpty && mounted) {
+                          final hasDescription =
+                              (vm.imageDescription ?? "").trim().isNotEmpty;
+                          final hasCaptions = vm.captions.isNotEmpty;
+                          if (vm.error == null &&
+                              (hasDescription || hasCaptions) &&
+                              mounted) {
                             Navigator.push(
                               context,
                               MaterialPageRoute(builder: (_) => const ResultScreen()),

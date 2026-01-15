@@ -48,6 +48,8 @@ class _ResultScreenState extends State<ResultScreen> {
                 ],
                 const Text("Captions", style: TextStyle(fontWeight: FontWeight.bold)),
                 const SizedBox(height: 10),
+                if (vm.captions.isEmpty)
+                  const Text("No captions returned."),
                 ...vm.captions.map((c) => Card(
                       child: ListTile(
                         title: Text(c),

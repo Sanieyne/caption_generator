@@ -31,22 +31,41 @@ class BackendCaptionService {
       throw Exception("Unexpected API response: ${res.body}");
     }
 
-    if (res.statusCode != 200 || data["success"] != true) {
-      final message = data["message"]?.toString() ?? res.body;
+    final successValue = data["success"];
+    final isSuccess = successValue == true ||
+        successValue?.toString().toLowerCase() == "true";
+
+    if (res.statusCode != 200 || !isSuccess) {
+      final message = data["message"]?.toString() ??
+          data["error"]?.toString() ??
+          res.body;
       throw Exception("Caption API failed: $message");
     }
 
-    final description = data["description"]?.toString();
+    final description = data["description"]?.toString() ??
+        data["image_description"]?.toString() ??
+        data["imageDescription"]?.toString();
     final captionsRaw = data["captions"];
 
-    if (description == null || captionsRaw is! List) {
-      throw Exception("Missing fields in API response: ${res.body}");
+    if (description == null) {
+      throw Exception("Missing description in API response: ${res.body}");
     }
 
-    final captions = captionsRaw
-        .map((e) => e.toString().trim())
-        .where((e) => e.isNotEmpty)
-        .toList();
+    final captions = <String>[];
+    if (captionsRaw is List) {
+      captions.addAll(
+        captionsRaw
+            .map((e) => e.toString().trim())
+            .where((e) => e.isNotEmpty),
+      );
+    } else if (captionsRaw is String) {
+      captions.addAll(
+        captionsRaw
+            .split("\n")
+            .map((e) => e.trim())
+            .where((e) => e.isNotEmpty),
+      );
+    }
 
     return BackendCaptionResult(
       description: description,
