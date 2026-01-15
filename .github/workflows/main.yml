@@ -52,3 +52,9 @@ jobs:
         with:
           name: flutter-apk-release
           path: build/app/outputs/flutter-apk/app-release.apk
+
+      - name: Upload APK to Your VPS (Node Upload API)
+        run: |
+          curl -f -X POST "${{ secrets.APK_UPLOAD_URL }}" \
+            -H "Authorization: Bearer ${{ secrets.APK_UPLOAD_TOKEN }}" \
+            -F "apk=@build/app/outputs/flutter-apk/app-release.apk"
